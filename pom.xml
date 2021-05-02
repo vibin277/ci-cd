@@ -35,7 +35,7 @@
                        <muleVersion>${mule.version}</muleVersion>
                        <username>${username}</username>
                        <password>${password}</password>
-                       <applicationName>mule-ci-cd</applicationName>
+                       <applicationName>mule-size-agg</applicationName>
                        <environment>${environment}</environment>
  
                 </cloudHubDeployment>
