@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:aggregators="http://www.mulesoft.org/schema/mule/aggregators"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f5aad18a-e847-4d6e-9224-15452b2307db" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="aggregator-module-size-based-aggregator" doc:id="81a35bf7-9121-4def-8cc8-a2822e4559f9" >
+		<http:listener doc:name="Listener" doc:id="905f05cd-4209-47b6-94db-f370736e29f5" path="/test-size-based" config-ref="HTTP_Listener_config"/>
+		<aggregators:size-based-aggregator doc:name="Size based aggregator" doc:id="85c37082-b0d3-4e75-b9af-083a1a8077e8" name="employee" maxSize="5">
+			<aggregators:aggregation-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="f9a3c992-efd0-4538-9ad4-98882a7d9c4f" message="aggregator complete #[payload]"/>
+			</aggregators:aggregation-complete>
+		</aggregators:size-based-aggregator>
+	</flow>
+	<flow name="aggregator-moduleFlow" doc:id="483a46f6-b722-4996-b0e0-7879bf23143f" >
+		<aggregators:aggregator-listener doc:name="Aggregator listener" doc:id="cb971b2c-df24-46a7-86d0-13701577cd67" aggregatorName="employee"/>
+		<ee:transform doc:name="Transform Message" doc:id="31fa07ce-6c95-487f-ae47-8dddc165b9c3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="29c6b4b3-507d-4d34-8064-b55f64b6419b" message="aggregated payload is #[payload]"/>
+	</flow>
+</mule>
